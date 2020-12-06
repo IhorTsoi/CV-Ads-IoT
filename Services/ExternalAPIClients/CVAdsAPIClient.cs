@@ -60,6 +60,15 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
             return advertisementResponse;
         }
 
+        public async Task<string> DownloadAdvertisementPicture(string pictureURL)
+        {
+            using var response = await httpClient.GetAsync(cvAdsAPIConfiguration.BaseURL + pictureURL);
+            response.EnsureSuccessStatusCode();
+
+            var localPicturePath = "downloads/" + pictureURL.Split('/')[^1];
+            return await response.SaveResponseFileAsync(localPicturePath);
+        }
+
         public void Dispose() => httpClient.Dispose();
     }
 }

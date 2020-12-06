@@ -43,5 +43,13 @@ namespace CV.Ads_Client.Utils
                 responseContent, new JsonSerializerOptions() { PropertyNamingPolicy = jsonNamingPolicy });
             return responseData;
         }
+
+        public static async Task<string> SaveResponseFileAsync(this HttpResponseMessage response, string pathToSaveFile)
+        {
+            var fileBytes = await response.Content.ReadAsByteArrayAsync();
+            await File.WriteAllBytesAsync(pathToSaveFile, fileBytes);
+
+            return pathToSaveFile;
+        }
     }
 }
