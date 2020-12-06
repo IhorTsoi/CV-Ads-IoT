@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace CV.Ads_Client.Extensions
+namespace CV.Ads_Client.Utils
 {
     public static class HttpExtensions
     {
@@ -30,11 +30,17 @@ namespace CV.Ads_Client.Extensions
             return request;
         }
 
-        public static async Task<T> ReadResponseAsync<T>(this HttpResponseMessage response)
+        public static Task<T> ReadResponseAsync<T>(this HttpResponseMessage response)
+        {
+            var defaultJsonNamingPolicy = JsonNamingPolicy.CamelCase;
+            return response.ReadResponseAsync<T>(defaultJsonNamingPolicy);
+        }
+
+        public static async Task<T> ReadResponseAsync<T>(this HttpResponseMessage response, JsonNamingPolicy jsonNamingPolicy)
         {
             string responseContent = await response.Content.ReadAsStringAsync();
             var responseData = JsonSerializer.Deserialize<T>(
-                responseContent, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                responseContent, new JsonSerializerOptions() { PropertyNamingPolicy = jsonNamingPolicy });
             return responseData;
         }
     }
