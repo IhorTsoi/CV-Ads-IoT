@@ -19,7 +19,7 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
 
         public async Task<GeolocationResponse> RetreiveLocationAsync()
         {
-            var response = await httpClient.GetAsync(geolocationDBAPIConfiguration.RetreiveLocationURL);
+            using var response = await httpClient.GetAsync(geolocationDBAPIConfiguration.RetreiveLocationURL);
             response.EnsureSuccessStatusCode();
 
             var geolocationResponse = await response.ReadResponseAsync<GeolocationResponse>(new SnakeCaseNamingPolicy());
