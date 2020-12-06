@@ -1,7 +1,7 @@
 ﻿using CV.Ads_Client.Configuration.Model.Sections;
 using CV.Ads_Client.Domain;
 using CV.Ads_Client.Domain.ExternalAPIDTOs.CVAdsDTOs;
-using CV.Ads_Client.Extensions;
+using CV.Ads_Client.Utils;
 using System;
 using System.IO;
 using System.Net.Http;
