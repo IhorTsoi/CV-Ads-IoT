@@ -8,5 +8,6 @@ namespace CV.Ads_Client.Configuration.Model
 
         public IoTConfigurationSection IoTConfiguration { get; set; }
         public CVAdsAPIConfigurationSection CVAdsAPIConfiguration { get; set; }
+        public GeolocationDBAPIConfigurationSection GeolocationDBAPIConfiguration { get; set; }
     }
 }
