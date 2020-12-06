@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
-using Services.Interfaces;
+using CV.Ads_Client.Services.Interfaces;
 
-namespace Services.Implementations {
+namespace CV.Ads_Client.Services.Implementations
+{
     public class StreamerPhotoProvider : IPhotoProvider
     {
         private readonly string _pathToStore;
@@ -21,20 +21,20 @@ namespace Services.Implementations {
         public string TakePhoto(string fileName)
         {
             string fullPathToPhoto = $"{_pathToStore}/{fileName}";
-            ProcessStartInfo processStartInfo = new ProcessStartInfo("streamer", $"-o {fullPathToPhoto}");
-            processStartInfo.RedirectStandardError = true;
-
-            using (var streamerProcess = Process.Start(processStartInfo)) 
+            ProcessStartInfo processStartInfo = new ProcessStartInfo("streamer", $"-o {fullPathToPhoto}")
             {
-                string errorMessage = streamerProcess.StandardError.ReadToEnd();
-                streamerProcess.WaitForExit();
+                RedirectStandardError = true
+            };
 
-                if (streamerProcess.ExitCode != 0)
-                {
-                    throw new Exception($"Error in {nameof(StreamerPhotoProvider.TakePhoto)}. Message:\n{errorMessage}.");
-                }
-                return fullPathToPhoto;
+            using var streamerProcess = Process.Start(processStartInfo);
+            string errorMessage = streamerProcess.StandardError.ReadToEnd();
+            streamerProcess.WaitForExit();
+
+            if (streamerProcess.ExitCode != 0)
+            {
+                throw new Exception($"Error in {nameof(StreamerPhotoProvider.TakePhoto)}. Message:\n{errorMessage}.");
             }
+            return fullPathToPhoto;
         }
     }
 }
