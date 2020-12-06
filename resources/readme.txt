@@ -1,0 +1,1 @@
+﻿This folder will be used as a temporary storage for photos taken from the integrated camera.
