@@ -2,7 +2,7 @@
 {
     public class CVAdsAPIConfigurationSection
     {
-        public string BaseURL { private get; set; }
+        public string BaseURL { get; set; }
         public string LoginRelativeURL { private get; set; }
         public string FaceDetectionRelativeURL { private get; set; }
         public string AdvertisementByEnvironmentRelativeURL { private get; set; }
