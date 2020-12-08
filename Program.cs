@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,8 +60,16 @@ namespace CV.Ads_Client
             serviceCollection.AddSingleton<IImageDisplayer, MockImageDisplayer>();
             serviceCollection.AddSingleton<IPhotoProvider, MockPhotoProvider>();
 #else
-            serviceCollection.AddSingleton<IImageDisplayer, EoGImageDisplayer>();
-            serviceCollection.AddSingleton<IPhotoProvider, StreamerPhotoProvider>();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                serviceCollection.AddSingleton<IImageDisplayer, NomacsImageDisplayer>();
+                serviceCollection.AddSingleton<IPhotoProvider, MockPhotoProvider>();
+            }
+            else
+            {
+                serviceCollection.AddSingleton<IImageDisplayer, EoGImageDisplayer>();
+                serviceCollection.AddSingleton<IPhotoProvider, StreamerPhotoProvider>();
+            }
 #endif
             serviceCollection.AddSingleton<ICipherService, CaesarCipherService>();
 
