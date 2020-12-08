@@ -1,7 +1,7 @@
+using CV.Ads_Client.Services.Interfaces;
 using System;
 using System.Diagnostics;
 using System.IO;
-using CV.Ads_Client.Services.Interfaces;
 
 namespace CV.Ads_Client.Services.Implementations
 {

@@ -11,7 +11,7 @@ namespace CV.Ads_Client.Domain.ExternalAPIDTOs.CVAdsDTOs
         public bool IsTurnedOn { get; set; }
         public bool IsCaching { get; set; }
 
-        public override string ToString() => 
+        public override string ToString() =>
             $"Mode: {Mode}. Caching: {IsCaching}. Screen is turned on: {IsTurnedOn}.";
     }
 }

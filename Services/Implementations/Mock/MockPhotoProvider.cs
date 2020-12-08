@@ -7,9 +7,9 @@ namespace CV.Ads_Client.Services.Implementations.Mock
 {
     class MockPhotoProvider : IPhotoProvider
     {
-        private readonly string[] samplePhotos = { 
+        private readonly string[] samplePhotos = {
             "resources/sample_photo_no_people.jpg",
-            "resources/sample_photo.jpg" 
+            "resources/sample_photo.jpg"
         };
 
         public string TakePhoto(string fileName)

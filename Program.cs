@@ -1,22 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using CV.Ads_Client.Configuration;
-using CV.Ads_Client.Services.Interfaces;
-using CV.Ads_Client.Services.Implementations;
-using System;
-using CV.Ads_Client.Services.ExternalAPIClients;
-using System.IO;
-using System.Threading.Tasks;
-using CV.Ads_Client.Domain.ExternalAPIDTOs.CVAdsDTOs;
-using CV.Ads_Client.Services.Caching;
-using CV.Ads_Client.Services.Implementations.Mock;
-using System.Linq;
-using CV.Ads_Client.Utils;
-using CV.Ads_Client.Routines;
+﻿using CV.Ads_Client.Configuration;
 using CV.Ads_Client.Domain.Constants;
-using System.Threading;
-using Microsoft.AspNetCore.SignalR.Client;
-using System.Net.Http;
+using CV.Ads_Client.Domain.ExternalAPIDTOs.CVAdsDTOs;
+using CV.Ads_Client.Routines;
 using CV.Ads_Client.Routines.Implementations;
+using CV.Ads_Client.Services.Caching;
+using CV.Ads_Client.Services.ExternalAPIClients;
+using CV.Ads_Client.Services.Implementations;
+using CV.Ads_Client.Services.Implementations.Mock;
+using CV.Ads_Client.Services.Interfaces;
+using CV.Ads_Client.Utils;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CV.Ads_Client
 {
@@ -25,7 +23,7 @@ namespace CV.Ads_Client
         static FileCachingService fileCache;
         static CVAdsAPIClient cvAdsAPIClient;
         static GeolocationDBAPIClient geoLocationAPIClient;
-        
+
         static LoginResponse smartDeviceState;
 
         static ManualResetEvent shutDownWasEmmited;
@@ -96,7 +94,7 @@ namespace CV.Ads_Client
                 throw;
             }
         }
-    
+
         static void ConfigureShutDownBehaviour()
         {
             shutDownWasEmmited = new ManualResetEvent(false);

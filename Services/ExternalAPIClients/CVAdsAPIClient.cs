@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CV.Ads_Client.Services.ExternalAPIClients
 {
-    public class CVAdsAPIClient: IDisposable
+    public class CVAdsAPIClient : IDisposable
     {
         private readonly CVAdsAPIConfigurationSection cvAdsAPIConfiguration;
         private readonly HttpClient httpClient;
@@ -29,7 +29,7 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
 
             using var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
-            
+
             var loginResponse = await response.ReadResponseAsync<LoginResponse>();
             return loginResponse;
         }

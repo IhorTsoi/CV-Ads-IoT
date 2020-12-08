@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace CV.Ads_Client.Configuration
 {
-    class LocalJsonFileConfigurationManager: IConfigurationManager
+    class LocalJsonFileConfigurationManager : IConfigurationManager
     {
         private readonly string _congigurationFilePath = "appsettings.json";
 
