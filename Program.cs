@@ -133,6 +133,8 @@ namespace CV.Ads_Client
                 Logger.Log(
                     "signalR hub", $"Received 'Activate' message with new password: '{newPassword}'", ConsoleColor.Blue);
                 serviceProvider.GetService<ICredentialsService>().UpdatePassword(newPassword);
+                Task.Delay(2000).GetAwaiter().GetResult();
+                reloginWasEmmited.Set();
             });
 
             try
