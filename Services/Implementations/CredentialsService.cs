@@ -28,7 +28,14 @@ namespace CV.Ads_Client.Services.Implementations
             return credentials;
         }
 
-        public void UpdateCredentials(Credentials credentials)
+        public void UpdatePassword(string newPassword)
+        {
+            Credentials currentCredentials = GetCredentials();
+            currentCredentials.Password = newPassword;
+            UpdateCredentials(currentCredentials);
+        }
+
+        private void UpdateCredentials(Credentials credentials)
         {
             var updatedIoTConfiguration = new IoTConfigurationSection()
             {

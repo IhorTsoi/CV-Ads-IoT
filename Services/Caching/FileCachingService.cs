@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CV.Ads_Client.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using FileName = System.String;
@@ -6,7 +7,7 @@ using LocalFilePath = System.String;
 
 namespace CV.Ads_Client.Services.Caching
 {
-    public class FileCachingService
+    public class FileCachingService : IDisposable
     {
         private readonly int capacity;
         private readonly Dictionary<FileName, FileCacheItem> cacheMap = new Dictionary<FileName, FileCacheItem>();
@@ -25,18 +26,19 @@ namespace CV.Ads_Client.Services.Caching
         {
             if (cacheMap.TryGetValue(fileName, out FileCacheItem cacheItem))
             {
-                LocalFilePath localFilePath = cacheItem.LocalFilePath;
-                lruList.Remove(cacheItem);
-                lruList.AddLast(cacheItem);
-                return localFilePath;
+                Logger.Log("cache", "Cache hit!", ConsoleColor.DarkGreen);
+                SetMostRecentlyUsed(cacheItem);
+                return cacheItem.LocalFilePath;
             }
+            Logger.Log("cache", "Cache miss", ConsoleColor.DarkRed);
             return null;
         }
 
         public void Add(FileName fileName, LocalFilePath localFilePath)
         {
-            if (Get(fileName) != null)
+            if (cacheMap.ContainsKey(fileName))
             {
+                SetMostRecentlyUsed(cacheMap[fileName]);
                 return;
             }
 
@@ -44,10 +46,17 @@ namespace CV.Ads_Client.Services.Caching
             {
                 RemoveFirst();
             }
-
             var fileCacheItem = new FileCacheItem(fileName, localFilePath);
             lruList.AddLast(fileCacheItem);
             cacheMap.Add(fileName, fileCacheItem);
+
+            Logger.Log("cache", $"Cache updated with ({fileName})", ConsoleColor.DarkYellow);
+        }
+
+        private void SetMostRecentlyUsed(FileCacheItem cacheItem)
+        {
+            lruList.Remove(cacheItem);
+            lruList.AddLast(cacheItem);
         }
 
         private void RemoveFirst()
@@ -56,6 +65,14 @@ namespace CV.Ads_Client.Services.Caching
             File.Delete(leastRecentlyUsedFileCacheItem.LocalFilePath);
             lruList.RemoveFirst();
             cacheMap.Remove(leastRecentlyUsedFileCacheItem.FileName);
+        }
+
+        public void Dispose()
+        {
+            while (lruList.Count > 0)
+            {
+                RemoveFirst();
+            }
         }
 
         private class FileCacheItem

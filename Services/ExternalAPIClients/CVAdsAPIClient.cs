@@ -4,12 +4,14 @@ using CV.Ads_Client.Domain.ExternalAPIDTOs.CVAdsDTOs;
 using CV.Ads_Client.Utils;
 using System;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CV.Ads_Client.Services.ExternalAPIClients
 {
-    class CVAdsAPIClient: IDisposable
+    public class CVAdsAPIClient: IDisposable
     {
         private readonly CVAdsAPIConfigurationSection cvAdsAPIConfiguration;
         private readonly HttpClient httpClient;
@@ -22,7 +24,7 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
 
         public async Task<LoginResponse> LoginAsync(Credentials credentials)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, cvAdsAPIConfiguration.LoginURL)
+            using var request = new HttpRequestMessage(HttpMethod.Post, cvAdsAPIConfiguration.GetLoginURL())
                 .AddJsonContent(credentials);
 
             using var response = await httpClient.SendAsync(request);
@@ -32,43 +34,63 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
             return loginResponse;
         }
 
-        public async Task<FaceDetectedResponse[]> DetectFacesAsync(FileStream photo, string accessToken) 
+        public async Task<FaceDetectedResponse[]> DetectFacesAsync(FileStream photo, string accessToken)
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, cvAdsAPIConfiguration.FaceDetectionURL)
+            using var request = new HttpRequestMessage(HttpMethod.Post, cvAdsAPIConfiguration.GetFaceDetectionURL())
                 .AddFormFileContent(photo)
                 .SetAuthorizationHeader(accessToken);
 
             using var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
-            var facesResponse = await response.ReadResponseAsync<FaceDetectedResponse[]>();
-            return facesResponse;
+            var facesDetected = await response.ReadResponseAsync<FaceDetectedResponse[]>();
+            LogFaceDetectionResult(facesDetected);
+            return facesDetected;
         }
 
         public async Task<AdvertisementResponse> GetAdvertisementByEnvironmentAsync(
             GetAdvertisementByEnvironmentRequest envRequest, string accessToken)
         {
             using var request = new HttpRequestMessage(
-                HttpMethod.Post, cvAdsAPIConfiguration.AdvertisementByEnvironmentURL)
+                HttpMethod.Post, cvAdsAPIConfiguration.GetAdvertisementByEnvironmentURL())
                 .AddJsonContent(envRequest)
                 .SetAuthorizationHeader(accessToken);
 
             using var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
 
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return null;
+            }
             var advertisementResponse = await response.ReadResponseAsync<AdvertisementResponse>();
             return advertisementResponse;
         }
 
-        public async Task<string> DownloadAdvertisementPicture(string pictureURL)
+        public async Task<string> DownloadAdvertisementPictureAsync(string pictureURL)
         {
             using var response = await httpClient.GetAsync(cvAdsAPIConfiguration.BaseURL + pictureURL);
             response.EnsureSuccessStatusCode();
+
+            Logger.Log("api", "The advertisement picture was downloaded", ConsoleColor.White);
 
             var localPicturePath = "downloads/" + pictureURL.Split('/')[^1];
             return await response.SaveResponseFileAsync(localPicturePath);
         }
 
         public void Dispose() => httpClient.Dispose();
+
+        private static void LogFaceDetectionResult(FaceDetectedResponse[] facesDetected)
+        {
+            if (facesDetected.Length == 0)
+            {
+                Logger.Log("face detection", "No faces were detected", ConsoleColor.White);
+            }
+            else
+            {
+                Logger.Log("face detection", $"Following faces were detected:\n\t" +
+                    $"{string.Join(", ", facesDetected.AsEnumerable())}", ConsoleColor.White);
+            }
+        }
     }
 }
