@@ -16,6 +16,7 @@ using CV.Ads_Client.Domain.Constants;
 using System.Threading;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http;
+using CV.Ads_Client.Routines.Implementations;
 
 namespace CV.Ads_Client
 {
@@ -159,12 +160,15 @@ namespace CV.Ads_Client
             return hubConnection;
         }
 
-        static IRoutine GetRoutine(ServiceProvider serviceProvider)
+        static IRoutine GetRoutine(IServiceProvider serviceProvider)
         {
+            IConfigurationManager configurationManager = serviceProvider.GetService<IConfigurationManager>();
+
             IRoutine routine = null;
             switch (smartDeviceState.Mode)
             {
                 case SmartDeviceMode.Inactive:
+                    routine = new InactiveRoutine(configurationManager);
                     break;
                 case SmartDeviceMode.Active:
                     if (smartDeviceState.IsTurnedOn)
@@ -174,10 +178,11 @@ namespace CV.Ads_Client
                     }
                     else
                     {
-
+                        routine = new ActiveTurnedOffRoutine(configurationManager);
                     }
                     break;
                 case SmartDeviceMode.Blocked:
+                    routine = new BlockedRoutine(configurationManager);
                     break;
             }
 

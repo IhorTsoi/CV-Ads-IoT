@@ -10,7 +10,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace CV.Ads_Client.Routines
+namespace CV.Ads_Client.Routines.Implementations
 {
     public class ActiveRoutine : IRoutine
     {
@@ -25,7 +25,7 @@ namespace CV.Ads_Client.Routines
         private readonly IConfigurationManager configurationManager;
 
         public ActiveRoutine(
-            ServiceProvider serviceProvider,
+            IServiceProvider serviceProvider,
             FileCachingService fileCache,
             CVAdsAPIClient cvAdsAPIClient,
             GeolocationDBAPIClient geoLocationAPIClient,
@@ -67,7 +67,7 @@ namespace CV.Ads_Client.Routines
                 return;
             }
             Logger.Log("routine", $"Advertisement was found: {advertisement.Name}", ConsoleColor.Green);
-            
+
             string localPathToAdPicture = await LoadPicturePath(advertisement);
             int showDuration = configurationManager.RetreiveConfiguration(config => config.ShowDuration);
             imageDisplayer.Display(localPathToAdPicture, showDuration);
@@ -84,7 +84,7 @@ namespace CV.Ads_Client.Routines
             {
                 localPathToAdPicture = fileCache.Get(advertisement.Url);
             }
-            
+
             if (localPathToAdPicture == null)
             {
                 localPathToAdPicture = await cvAdsAPIClient
