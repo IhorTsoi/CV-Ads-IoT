@@ -159,7 +159,9 @@ namespace CV.Ads_Client
         static HubConnection CreateHubConnection(ServiceProvider serviceProvider)
         {
             var hubURL = serviceProvider.GetService<IConfigurationManager>()
-                .RetreiveConfiguration(configuration => configuration.CVAdsAPIConfiguration.GetHubURL());
+                .RetreiveConfiguration(configuration => configuration.CVAdsAPIConfiguration.GetHubURL())
+                .Replace("5001", "5000")
+                .Replace("https", "http");
             var hubConnection = new HubConnectionBuilder()
                 .WithUrl(hubURL, options =>
                 {
