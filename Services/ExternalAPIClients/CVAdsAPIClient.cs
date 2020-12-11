@@ -19,7 +19,10 @@ namespace CV.Ads_Client.Services.ExternalAPIClients
         public CVAdsAPIClient(CVAdsAPIConfigurationSection cvAdsAPIConfiguration)
         {
             this.cvAdsAPIConfiguration = cvAdsAPIConfiguration;
-            httpClient = new HttpClient();
+            httpClient = new HttpClient(new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = (_1, _2, _3, _4) => true
+            });
         }
 
         public async Task<LoginResponse> LoginAsync(Credentials credentials)
