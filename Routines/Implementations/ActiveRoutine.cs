@@ -46,11 +46,8 @@ namespace CV.Ads_Client.Routines.Implementations
             Logger.StartNewSection();
 
             var location = await geoLocationAPIClient.RetreiveLocationAsync();
+            var facesDetected = await RetreiveFacesAsync();
 
-            var photoPath = photoProvider.TakePhoto(CreateEnvironmentPhotoName());
-            using var photo = File.OpenRead(photoPath);
-
-            var facesDetected = await cvAdsAPIClient.DetectFacesAsync(photo, smartDeviceState.AccessToken);
             if (facesDetected.Length == 0)
             {
                 await SleepAsync();
@@ -75,6 +72,20 @@ namespace CV.Ads_Client.Routines.Implementations
             {
                 File.Delete(localPathToAdPicture);
             }
+        }
+
+        private async Task<FaceDetectedResponse[]> RetreiveFacesAsync()
+        {
+            FaceDetectedResponse[] facesDetected = null;
+
+            var photoPath = photoProvider.TakePhoto(CreateEnvironmentPhotoName());
+            using (var photoFile = File.OpenRead(photoPath))
+            {
+                facesDetected = await cvAdsAPIClient.DetectFacesAsync(photoFile, smartDeviceState.AccessToken);
+            }
+
+            File.Delete(photoPath);
+            return facesDetected;
         }
 
         private async Task<string> LoadPicturePath(AdvertisementResponse advertisement)
@@ -107,7 +118,7 @@ namespace CV.Ads_Client.Routines.Implementations
             await Task.Delay(freezeDurationInSeconds * 1000);
         }
 
-        private static string CreateEnvironmentPhotoName() => $"{Guid.NewGuid()}.jpg";
+        private static string CreateEnvironmentPhotoName() => $"{Guid.NewGuid()}.jpeg";
 
         private static GetAdvertisementByEnvironmentRequest GetEnvironmentData(
             GeolocationResponse location, FaceDetectedResponse[] faceDetected) =>
