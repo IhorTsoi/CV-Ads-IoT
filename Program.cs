@@ -63,7 +63,7 @@ namespace CV.Ads_Client
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 serviceCollection.AddSingleton<IImageDisplayer, NomacsImageDisplayer>();
-                serviceCollection.AddSingleton<IPhotoProvider, MockPhotoProvider>();
+                serviceCollection.AddSingleton<IPhotoProvider, PythonPhotoProvider>();
             }
             else
             {
